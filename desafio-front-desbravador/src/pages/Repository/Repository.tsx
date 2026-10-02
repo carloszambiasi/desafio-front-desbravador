@@ -1,6 +1,8 @@
 import { Link, useParams } from 'react-router-dom';
 
 import { useGithubRepository } from '../../hooks/useGithubRepository';
+import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
+import Loading from '../../components/Loading/Loading';
 
 function Repository() {
   const { owner, repo } = useParams();
@@ -16,11 +18,11 @@ function Repository() {
   }
 
   if (loading) {
-    return <p>Carregando repositório...</p>;
+    return <Loading message="Carregando repositório..." />;
   }
 
   if (error) {
-    return <p>{error}</p>;
+    return <ErrorMessage message={error} />;
   }
 
   if (!repository) {

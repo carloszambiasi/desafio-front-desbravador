@@ -4,6 +4,8 @@ import { useParams } from 'react-router-dom';
 import RepositoryList from '../../components/RepositoryList/RepositoryList';
 import { useGithubRepositories } from '../../hooks/useGithubRepositories';
 import { useGithubUser } from '../../hooks/useGithubUser';
+import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
+import Loading from '../../components/Loading/Loading';
 
 type SortOption =
   | 'stars-desc'
@@ -61,11 +63,11 @@ function User() {
   }
 
   if (loading) {
-    return <p>Carregando...</p>;
+    return <Loading message="Carregando usuário..." />;
   }
 
   if (error) {
-    return <p>{error}</p>;
+    return <ErrorMessage message={error} />;
   }
 
   if (!user) {
@@ -94,9 +96,13 @@ function User() {
 
       <h2>Repositórios</h2>
 
-      {repositoriesLoading && <p>Carregando repositórios...</p>}
+      {repositoriesLoading && (
+        <Loading message="Carregando repositórios..." />
+      )}
 
-      {repositoriesError && <p>{repositoriesError}</p>}
+      {repositoriesError && (
+        <ErrorMessage message={repositoriesError} />
+      )}
 
       {!repositoriesLoading && !repositoriesError && (
         <>
