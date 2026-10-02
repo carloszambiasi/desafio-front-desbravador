@@ -23,12 +23,7 @@ export function useGithubRepositories(
         setError(null);
 
         const repositoriesData = await getUserRepositories(username);
-
-        const sortedRepositories = [...repositoriesData].sort(
-          (a, b) => b.stargazers_count - a.stargazers_count,
-        );
-
-        setRepositories(sortedRepositories);
+        setRepositories(repositoriesData);
       } catch {
         setRepositories([]);
         setError('Não foi possível carregar os repositórios.');
