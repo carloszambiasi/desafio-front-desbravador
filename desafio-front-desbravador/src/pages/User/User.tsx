@@ -1,5 +1,7 @@
 import { useParams } from 'react-router-dom';
 
+import RepositoryList from '../../components/RepositoryList/RepositoryList';
+import { useGithubRepositories } from '../../hooks/useGithubRepositories';
 import { useGithubUser } from '../../hooks/useGithubUser';
 
 function User() {
@@ -10,6 +12,12 @@ function User() {
     loading,
     error,
   } = useGithubUser(username ?? '');
+
+  const {
+    repositories,
+    loading: repositoriesLoading,
+    error: repositoriesError,
+  } = useGithubRepositories(username ?? '');
 
   if (!username) {
     return <p>Usuário não informado.</p>;
@@ -46,6 +54,16 @@ function User() {
       <p>Seguindo: {user.following}</p>
 
       <p>Repositórios públicos: {user.public_repos}</p>
+
+      <h2>Repositórios</h2>
+
+      {repositoriesLoading && <p>Carregando repositórios...</p>}
+
+      {repositoriesError && <p>{repositoriesError}</p>}
+
+      {!repositoriesLoading && !repositoriesError && (
+        <RepositoryList repositories={repositories} />
+      )}
     </main>
   );
 }
