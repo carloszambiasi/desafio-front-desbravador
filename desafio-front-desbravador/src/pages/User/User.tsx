@@ -1,11 +1,21 @@
+import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import RepositoryList from '../../components/RepositoryList/RepositoryList';
 import { useGithubRepositories } from '../../hooks/useGithubRepositories';
 import { useGithubUser } from '../../hooks/useGithubUser';
 
+type SortOption =
+  | 'stars-desc'
+  | 'stars-asc'
+  | 'name-asc'
+  | 'name-desc';
+
 function User() {
   const { username } = useParams();
+
+  const [sortOption, setSortOption] =
+    useState<SortOption>('stars-desc');
 
   const {
     user,
@@ -18,6 +28,33 @@ function User() {
     loading: repositoriesLoading,
     error: repositoriesError,
   } = useGithubRepositories(username ?? '');
+
+  const sortedRepositories = useMemo(() => {
+    const repositoriesCopy = [...repositories];
+
+    switch (sortOption) {
+      case 'stars-asc':
+        return repositoriesCopy.sort(
+          (a, b) => a.stargazers_count - b.stargazers_count,
+        );
+
+      case 'name-asc':
+        return repositoriesCopy.sort((a, b) =>
+          a.name.localeCompare(b.name),
+        );
+
+      case 'name-desc':
+        return repositoriesCopy.sort((a, b) =>
+          b.name.localeCompare(a.name),
+        );
+
+      case 'stars-desc':
+      default:
+        return repositoriesCopy.sort(
+          (a, b) => b.stargazers_count - a.stargazers_count,
+        );
+    }
+  }, [repositories, sortOption]);
 
   if (!username) {
     return <p>Usuário não informado.</p>;
@@ -62,7 +99,26 @@ function User() {
       {repositoriesError && <p>{repositoriesError}</p>}
 
       {!repositoriesLoading && !repositoriesError && (
-        <RepositoryList repositories={repositories} />
+        <>
+          <label htmlFor="repository-sort">
+            Ordenar por:
+          </label>
+
+          <select
+            id="repository-sort"
+            value={sortOption}
+            onChange={(event) =>
+              setSortOption(event.target.value as SortOption)
+            }
+          >
+            <option value="stars-desc">Mais estrelas</option>
+            <option value="stars-asc">Menos estrelas</option>
+            <option value="name-asc">Nome A-Z</option>
+            <option value="name-desc">Nome Z-A</option>
+          </select>
+
+          <RepositoryList repositories={sortedRepositories} />
+        </>
       )}
     </main>
   );
