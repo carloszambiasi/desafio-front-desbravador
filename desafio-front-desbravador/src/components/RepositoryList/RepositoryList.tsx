@@ -1,22 +1,31 @@
 import RepositoryCard from '../RepositoryCard/RepositoryCard';
+
 import type { GitHubRepository } from '../../types/github';
 
 interface RepositoryListProps {
   repositories: GitHubRepository[];
 }
 
-function RepositoryList({ repositories }: RepositoryListProps) {
+function RepositoryList({
+  repositories,
+}: RepositoryListProps) {
   if (repositories.length === 0) {
-    return <p>Nenhum repositório encontrado.</p>;
+    return (
+      <div className="alert alert-secondary">
+        Nenhum repositório encontrado.
+      </div>
+    );
   }
 
   return (
-    <section>
+    <section className="row g-3">
       {repositories.map((repository) => (
-        <RepositoryCard
+        <div
           key={repository.id}
-          repository={repository}
-        />
+          className="col-12 col-lg-6"
+        >
+          <RepositoryCard repository={repository} />
+        </div>
       ))}
     </section>
   );

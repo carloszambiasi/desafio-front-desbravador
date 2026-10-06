@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 
-import { getRepository } from '../services/githubApi';
+import {
+  getGithubErrorMessage,
+  getRepository,
+} from '../services/githubApi';
+
 import type { GitHubRepository } from '../types/github';
 
 interface UseGithubRepositoryResult {
@@ -18,9 +22,17 @@ export function useGithubRepository(
 
   const [loading, setLoading] = useState(true);
 
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] =
+    useState<string | null>(null);
 
   useEffect(() => {
+    if (!owner || !repositoryName) {
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+
     async function loadRepository() {
       try {
         setLoading(true);
@@ -31,16 +43,32 @@ export function useGithubRepository(
           repositoryName,
         );
 
-        setRepository(repositoryData);
-      } catch {
-        setRepository(null);
-        setError('Não foi possível carregar o repositório.');
+        if (!cancelled) {
+          setRepository(repositoryData);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setRepository(null);
+
+          setError(
+            getGithubErrorMessage(
+              error,
+              'Repositório não encontrado.',
+            ),
+          );
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     }
 
     loadRepository();
+
+    return () => {
+      cancelled = true;
+    };
   }, [owner, repositoryName]);
 
   return {

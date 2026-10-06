@@ -2,12 +2,21 @@ import SearchForm from '../../components/SearchForm/SearchForm';
 
 function Home() {
   return (
-    <main>
-      <h1>GitHub Repository Explorer</h1>
+    <main className="container py-5">
+      <section className="mx-auto home-search">
+        <div className="text-center mb-4">
+          <h1 className="display-5 fw-bold">
+            Encontre repositórios no GitHub
+          </h1>
 
-      <p>Busque um usuário do GitHub para visualizar seus repositórios.</p>
+          <p className="lead text-secondary">
+            Busque um usuário para visualizar seus
+            dados e repositórios mais populares.
+          </p>
+        </div>
 
-      <SearchForm />
+        <SearchForm />
+      </section>
     </main>
   );
 }

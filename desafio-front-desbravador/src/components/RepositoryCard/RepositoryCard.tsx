@@ -6,24 +6,39 @@ interface RepositoryCardProps {
   repository: GitHubRepository;
 }
 
-function RepositoryCard({ repository }: RepositoryCardProps) {
+function RepositoryCard({
+  repository,
+}: RepositoryCardProps) {
   return (
-    <article>
-      <h2>
-        <Link
-          to={`/repository/${repository.owner.login}/${repository.name}`}
-        >
-          {repository.name}
-        </Link>
-      </h2>
+    <article className="card h-100 shadow-sm">
+      <div className="card-body d-flex flex-column">
+        <h2 className="h5 card-title">
+          <Link
+            to={`/repository/${repository.owner.login}/${repository.name}`}
+            className="text-decoration-none"
+          >
+            {repository.name}
+          </Link>
+        </h2>
 
-      <p>{repository.description ?? 'Sem descrição.'}</p>
+        <p className="card-text text-secondary flex-grow-1">
+          {repository.description ?? 'Sem descrição.'}
+        </p>
 
-      <p>⭐ {repository.stargazers_count}</p>
+        <div className="d-flex flex-wrap gap-3 small text-secondary">
+          <span>
+            ⭐ {repository.stargazers_count}
+          </span>
 
-      <p>Linguagem: {repository.language ?? 'Não informada'}</p>
+          <span>
+            Forks: {repository.forks_count}
+          </span>
 
-      <p>Forks: {repository.forks_count}</p>
+          <span>
+            {repository.language ?? 'Linguagem não informada'}
+          </span>
+        </div>
+      </div>
     </article>
   );
 }

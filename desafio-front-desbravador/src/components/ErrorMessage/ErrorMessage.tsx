@@ -2,10 +2,15 @@ interface ErrorMessageProps {
   message: string;
 }
 
-function ErrorMessage({ message }: ErrorMessageProps) {
+function ErrorMessage({
+  message,
+}: ErrorMessageProps) {
   return (
-    <div role="alert">
-      <p>{message}</p>
+    <div
+      className="alert alert-danger"
+      role="alert"
+    >
+      {message}
     </div>
   );
 }

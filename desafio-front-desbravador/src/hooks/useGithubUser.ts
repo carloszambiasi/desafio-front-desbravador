@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 
-import { getUser } from '../services/githubApi';
+import {
+  getGithubErrorMessage,
+  getUser,
+} from '../services/githubApi';
+
 import type { GitHubUser } from '../types/github';
 
 interface UseGithubUserResult {
@@ -9,12 +13,25 @@ interface UseGithubUserResult {
   error: string | null;
 }
 
-export function useGithubUser(username: string): UseGithubUserResult {
-  const [user, setUser] = useState<GitHubUser | null>(null);
+export function useGithubUser(
+  username: string,
+): UseGithubUserResult {
+  const [user, setUser] =
+    useState<GitHubUser | null>(null);
+
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
+  const [error, setError] =
+    useState<string | null>(null);
 
   useEffect(() => {
+    if (!username) {
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+
     async function loadUser() {
       try {
         setLoading(true);
@@ -22,16 +39,32 @@ export function useGithubUser(username: string): UseGithubUserResult {
 
         const userData = await getUser(username);
 
-        setUser(userData);
-      } catch {
-        setUser(null);
-        setError('Não foi possível carregar o usuário.');
+        if (!cancelled) {
+          setUser(userData);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setUser(null);
+
+          setError(
+            getGithubErrorMessage(
+              error,
+              'Usuário não encontrado.',
+            ),
+          );
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     }
 
     loadUser();
+
+    return () => {
+      cancelled = true;
+    };
   }, [username]);
 
   return {

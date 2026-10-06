@@ -15,22 +15,44 @@ function SearchForm() {
       return;
     }
 
-    navigate(`/user/${encodeURIComponent(normalizedUsername)}`);
+    navigate(
+      `/user/${encodeURIComponent(normalizedUsername)}`,
+    );
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor="username">GitHub username</label>
+    <form
+      onSubmit={handleSubmit}
+      className="row g-2"
+    >
+      <div className="col-12 col-md">
+        <label
+          htmlFor="username"
+          className="visually-hidden"
+        >
+          Usuário do GitHub
+        </label>
 
-      <input
-        id="username"
-        type="text"
-        value={username}
-        onChange={(event) => setUsername(event.target.value)}
-        placeholder="Ex: carloszambiasi"
-      />
+        <input
+          id="username"
+          type="text"
+          className="form-control form-control-lg"
+          placeholder="Digite um usuário do GitHub"
+          value={username}
+          onChange={(event) =>
+            setUsername(event.target.value)
+          }
+        />
+      </div>
 
-      <button type="submit">Buscar</button>
+      <div className="col-12 col-md-auto">
+        <button
+          type="submit"
+          className="btn btn-primary btn-lg w-100"
+        >
+          Buscar
+        </button>
+      </div>
     </form>
   );
 }
