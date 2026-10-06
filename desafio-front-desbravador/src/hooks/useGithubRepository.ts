@@ -2,22 +2,23 @@ import { useEffect, useState } from 'react';
 
 import {
   getGithubErrorMessage,
-  getUser,
+  getRepository,
 } from '../services/githubApi';
 
-import type { GitHubUser } from '../types/github';
+import type { GitHubRepository } from '../types/github';
 
-interface UseGithubUserResult {
-  user: GitHubUser | null;
+interface UseGithubRepositoryResult {
+  repository: GitHubRepository | null;
   loading: boolean;
   error: string | null;
 }
 
-export function useGithubUser(
-  username: string,
-): UseGithubUserResult {
-  const [user, setUser] =
-    useState<GitHubUser | null>(null);
+export function useGithubRepository(
+  owner: string,
+  repositoryName: string,
+): UseGithubRepositoryResult {
+  const [repository, setRepository] =
+    useState<GitHubRepository | null>(null);
 
   const [loading, setLoading] = useState(true);
 
@@ -25,31 +26,34 @@ export function useGithubUser(
     useState<string | null>(null);
 
   useEffect(() => {
-    if (!username) {
+    if (!owner || !repositoryName) {
       setLoading(false);
       return;
     }
 
     let cancelled = false;
 
-    async function loadUser() {
+    async function loadRepository() {
       try {
         setLoading(true);
         setError(null);
 
-        const userData = await getUser(username);
+        const repositoryData = await getRepository(
+          owner,
+          repositoryName,
+        );
 
         if (!cancelled) {
-          setUser(userData);
+          setRepository(repositoryData);
         }
       } catch (error) {
         if (!cancelled) {
-          setUser(null);
+          setRepository(null);
 
           setError(
             getGithubErrorMessage(
               error,
-              'Usuário não encontrado.',
+              'Repositório não encontrado.',
             ),
           );
         }
@@ -60,15 +64,15 @@ export function useGithubUser(
       }
     }
 
-    loadUser();
+    loadRepository();
 
     return () => {
       cancelled = true;
     };
-  }, [username]);
+  }, [owner, repositoryName]);
 
   return {
-    user,
+    repository,
     loading,
     error,
   };

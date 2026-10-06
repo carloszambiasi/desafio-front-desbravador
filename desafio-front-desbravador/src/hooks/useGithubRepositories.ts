@@ -2,22 +2,22 @@ import { useEffect, useState } from 'react';
 
 import {
   getGithubErrorMessage,
-  getUser,
+  getUserRepositories,
 } from '../services/githubApi';
 
-import type { GitHubUser } from '../types/github';
+import type { GitHubRepository } from '../types/github';
 
-interface UseGithubUserResult {
-  user: GitHubUser | null;
+interface UseGithubRepositoriesResult {
+  repositories: GitHubRepository[];
   loading: boolean;
   error: string | null;
 }
 
-export function useGithubUser(
+export function useGithubRepositories(
   username: string,
-): UseGithubUserResult {
-  const [user, setUser] =
-    useState<GitHubUser | null>(null);
+): UseGithubRepositoriesResult {
+  const [repositories, setRepositories] =
+    useState<GitHubRepository[]>([]);
 
   const [loading, setLoading] = useState(true);
 
@@ -32,24 +32,25 @@ export function useGithubUser(
 
     let cancelled = false;
 
-    async function loadUser() {
+    async function loadRepositories() {
       try {
         setLoading(true);
         setError(null);
 
-        const userData = await getUser(username);
+        const repositoriesData =
+          await getUserRepositories(username);
 
         if (!cancelled) {
-          setUser(userData);
+          setRepositories(repositoriesData);
         }
       } catch (error) {
         if (!cancelled) {
-          setUser(null);
+          setRepositories([]);
 
           setError(
             getGithubErrorMessage(
               error,
-              'Usuário não encontrado.',
+              'Não foi possível encontrar os repositórios.',
             ),
           );
         }
@@ -60,7 +61,7 @@ export function useGithubUser(
       }
     }
 
-    loadUser();
+    loadRepositories();
 
     return () => {
       cancelled = true;
@@ -68,7 +69,7 @@ export function useGithubUser(
   }, [username]);
 
   return {
-    user,
+    repositories,
     loading,
     error,
   };
