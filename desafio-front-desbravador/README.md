@@ -1,75 +1,257 @@
-# React + TypeScript + Vite
+# GitHub Repository Explorer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicação desenvolvida como desafio técnico Front-End para a **Desbravador Software**.
 
-Currently, two official plugins are available:
+O projeto permite buscar usuários do GitHub, visualizar informações do perfil, consultar seus repositórios, alterar a ordenação da listagem e acessar os detalhes de cada repositório.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Aplicação publicada
 
-## React Compiler
+A aplicação está disponível em:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+https://desafio-front-desbravador-sage.vercel.app/
 
-## Expanding the ESLint configuration
+## Repositório
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+https://github.com/carloszambiasi/desafio-front-desbravador
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Tecnologias utilizadas
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- React
+- TypeScript
+- Vite
+- React Router
+- Axios
+- Bootstrap
+- GitHub REST API
+- Vercel
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Funcionalidades
 
+- Busca de usuários do GitHub
+- Visualização das informações do perfil
+- Exibição de avatar, nome, bio, seguidores e usuários seguidos
+- Exibição da quantidade de repositórios públicos
+- Listagem dos repositórios do usuário
+- Ordenação dos repositórios por:
+  - Mais estrelas
+  - Menos estrelas
+  - Nome A-Z
+  - Nome Z-A
+- Página de detalhes do repositório
+- Exibição de estrelas, forks, linguagem e outras informações do repositório
+- Link para o perfil original no GitHub
+- Link para o repositório original no GitHub
+- Estados de carregamento
+- Tratamento de erros da API
+- Tratamento de usuário e repositório não encontrados
+- Página 404
+- Layout responsivo utilizando Bootstrap
+- Paginação das requisições de repositórios
+
+## Rotas
+
+### Página inicial
+
+```text
+/
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Permite pesquisar um usuário do GitHub.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Perfil do usuário
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```text
+/user/:username
 ```
+
+Exibe as informações do usuário e seus repositórios.
+
+### Detalhes do repositório
+
+```text
+/repository/:owner/:repo
+```
+
+Exibe informações detalhadas do repositório selecionado.
+
+## API
+
+A aplicação utiliza a **GitHub REST API**.
+
+Os principais endpoints utilizados são:
+
+```text
+GET /users/:username
+GET /users/:username/repos
+GET /repos/:owner/:repo
+```
+
+A comunicação com a API é centralizada utilizando uma instância do Axios.
+
+## Estrutura do projeto
+
+```text
+src/
+├── components/
+│   ├── ErrorMessage/
+│   ├── Header/
+│   ├── Loading/
+│   ├── RepositoryCard/
+│   ├── RepositoryList/
+│   ├── SearchForm/
+│   └── UserProfile/
+│
+├── hooks/
+│   ├── useGithubRepositories.ts
+│   ├── useGithubRepository.ts
+│   └── useGithubUser.ts
+│
+├── pages/
+│   ├── Home/
+│   ├── NotFound/
+│   ├── Repository/
+│   └── User/
+│
+├── routes/
+│   └── AppRoutes.tsx
+│
+├── services/
+│   └── githubApi.ts
+│
+├── styles/
+│   └── global.css
+│
+├── types/
+│   └── github.ts
+│
+├── App.tsx
+└── main.tsx
+```
+
+## Organização da aplicação
+
+A aplicação foi dividida em camadas com responsabilidades específicas.
+
+### Components
+
+Contém os componentes reutilizáveis da interface, como cards de repositório, formulário de pesquisa, estados de carregamento e mensagens de erro.
+
+### Pages
+
+Contém as páginas relacionadas às rotas da aplicação.
+
+### Hooks
+
+Centraliza a lógica de carregamento dos dados da API e o gerenciamento dos estados relacionados às requisições.
+
+### Services
+
+Responsável pela comunicação com a API do GitHub através do Axios.
+
+### Types
+
+Contém as interfaces TypeScript utilizadas para representar os dados retornados pela API.
+
+### Routes
+
+Centraliza a configuração das rotas utilizando React Router.
+
+## Ordenação dos repositórios
+
+Por padrão, os repositórios são apresentados em ordem decrescente de estrelas.
+
+O usuário também pode alterar a ordenação para:
+
+- Menos estrelas
+- Nome A-Z
+- Nome Z-A
+
+A ordenação é realizada no client-side sem necessidade de realizar uma nova requisição à API.
+
+## Tratamento de erros
+
+A aplicação possui tratamento para diferentes situações, incluindo:
+
+- Usuário não encontrado
+- Repositório não encontrado
+- Falha de conexão com a API
+- Limite de requisições da API do GitHub
+- Rotas inexistentes
+
+## Responsividade
+
+O layout foi desenvolvido utilizando o sistema de grid e componentes do **Bootstrap**, permitindo a utilização da aplicação tanto em dispositivos desktop quanto mobile.
+
+## Instalação
+
+Clone o repositório:
+
+```bash
+git clone https://github.com/carloszambiasi/desafio-front-desbravador.git
+```
+
+Acesse a pasta da aplicação:
+
+```bash
+cd desafio-front-desbravador/desafio-front-desbravador
+```
+
+Instale as dependências:
+
+```bash
+npm install
+```
+
+## Executando localmente
+
+Execute:
+
+```bash
+npm run dev
+```
+
+O Vite iniciará o servidor de desenvolvimento e exibirá no terminal o endereço local da aplicação.
+
+## Build de produção
+
+Para gerar o build:
+
+```bash
+npm run build
+```
+
+## Preview do build
+
+Para testar o build de produção localmente:
+
+```bash
+npm run preview
+```
+
+## Fluxo Git
+
+Durante o desenvolvimento foi utilizado um fluxo baseado em branches:
+
+```text
+feature/* → develop → main
+```
+
+Onde:
+
+- `feature/*` — desenvolvimento isolado das funcionalidades
+- `develop` — integração e homologação
+- `main` — versão estável utilizada em produção
+
+As funcionalidades foram desenvolvidas em branches separadas e posteriormente integradas através de Pull Requests.
+
+## Deploy
+
+A aplicação foi publicada utilizando **Vercel**.
+
+Produção:
+
+https://desafio-front-desbravador-sage.vercel.app/
+
+## Autor
+
+**Carlos Alexandre Zambiasi**
