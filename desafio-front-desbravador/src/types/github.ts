@@ -25,6 +25,7 @@ export interface GitHubRepository {
   created_at: string;
   default_branch: string;
   visibility: string;
+
   owner: {
     login: string;
   };
